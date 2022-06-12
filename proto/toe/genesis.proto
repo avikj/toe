@@ -1,0 +1,14 @@
+syntax = "proto3";
+package avikj.toe.toe;
+
+import "gogoproto/gogo.proto";
+import "toe/params.proto";
+// this line is used by starport scaffolding # genesis/proto/import
+
+option go_package = "github.com/avikj/toe/x/toe/types";
+
+// GenesisState defines the toe module's genesis state.
+message GenesisState {
+  Params params = 1 [(gogoproto.nullable) = false];
+  // this line is used by starport scaffolding # genesis/proto/state
+}
