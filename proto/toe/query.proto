@@ -6,6 +6,7 @@ import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 import "toe/params.proto";
 import "toe/next_game_id.proto";
+import "toe/game_data.proto";
 // this line is used by starport scaffolding # 1
 
 option go_package = "github.com/avikj/toe/x/toe/types";
@@ -20,6 +21,16 @@ service Query {
 	rpc NextGameId(QueryGetNextGameIdRequest) returns (QueryGetNextGameIdResponse) {
 		option (google.api.http).get = "/avikj/toe/toe/next_game_id";
 	}
+// Queries a GameData by index.
+	rpc GameData(QueryGetGameDataRequest) returns (QueryGetGameDataResponse) {
+		option (google.api.http).get = "/avikj/toe/toe/game_data/{index}";
+	}
+
+	// Queries a list of GameData items.
+	rpc GameDataAll(QueryAllGameDataRequest) returns (QueryAllGameDataResponse) {
+		option (google.api.http).get = "/avikj/toe/toe/game_data";
+	}
+
 // this line is used by starport scaffolding # 2
 }
 
@@ -37,4 +48,22 @@ message QueryGetNextGameIdRequest {}
 message QueryGetNextGameIdResponse {
 	NextGameId NextGameId = 1 [(gogoproto.nullable) = false];
 }
+message QueryGetGameDataRequest {
+	  string index = 1;
+
+}
+
+message QueryGetGameDataResponse {
+	GameData gameData = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllGameDataRequest {
+	cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllGameDataResponse {
+	repeated GameData gameData = 1 [(gogoproto.nullable) = false];
+	cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
 // this line is used by starport scaffolding # 3

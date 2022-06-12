@@ -1,10 +1,11 @@
 import { txClient, queryClient, MissingWalletError , registry} from './module'
 
+import { GameData } from "./module/types/toe/game_data"
 import { NextGameId } from "./module/types/toe/next_game_id"
 import { Params } from "./module/types/toe/params"
 
 
-export { NextGameId, Params };
+export { GameData, NextGameId, Params };
 
 async function initTxClient(vuexGetters) {
 	return await txClient(vuexGetters['common/wallet/signer'], {
@@ -44,8 +45,11 @@ const getDefaultState = () => {
 	return {
 				Params: {},
 				NextGameId: {},
+				GameData: {},
+				GameDataAll: {},
 				
 				_Structure: {
+						GameData: getStructure(GameData.fromPartial({})),
 						NextGameId: getStructure(NextGameId.fromPartial({})),
 						Params: getStructure(Params.fromPartial({})),
 						
@@ -87,6 +91,18 @@ export default {
 						(<any> params).query=null
 					}
 			return state.NextGameId[JSON.stringify(params)] ?? {}
+		},
+				getGameData: (state) => (params = { params: {}}) => {
+					if (!(<any> params).query) {
+						(<any> params).query=null
+					}
+			return state.GameData[JSON.stringify(params)] ?? {}
+		},
+				getGameDataAll: (state) => (params = { params: {}}) => {
+					if (!(<any> params).query) {
+						(<any> params).query=null
+					}
+			return state.GameDataAll[JSON.stringify(params)] ?? {}
 		},
 				
 		getTypeStructure: (state) => (type) => {
@@ -161,6 +177,54 @@ export default {
 				return getters['getNextGameId']( { params: {...key}, query}) ?? {}
 			} catch (e) {
 				throw new Error('QueryClient:QueryNextGameId API Node Unavailable. Could not perform query: ' + e.message)
+				
+			}
+		},
+		
+		
+		
+		
+		 		
+		
+		
+		async QueryGameData({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+			try {
+				const key = params ?? {};
+				const queryClient=await initQueryClient(rootGetters)
+				let value= (await queryClient.queryGameData( key.index)).data
+				
+					
+				commit('QUERY', { query: 'GameData', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryGameData', payload: { options: { all }, params: {...key},query }})
+				return getters['getGameData']( { params: {...key}, query}) ?? {}
+			} catch (e) {
+				throw new Error('QueryClient:QueryGameData API Node Unavailable. Could not perform query: ' + e.message)
+				
+			}
+		},
+		
+		
+		
+		
+		 		
+		
+		
+		async QueryGameDataAll({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+			try {
+				const key = params ?? {};
+				const queryClient=await initQueryClient(rootGetters)
+				let value= (await queryClient.queryGameDataAll(query)).data
+				
+					
+				while (all && (<any> value).pagination && (<any> value).pagination.next_key!=null) {
+					let next_values=(await queryClient.queryGameDataAll({...query, 'pagination.key':(<any> value).pagination.next_key})).data
+					value = mergeResults(value, next_values);
+				}
+				commit('QUERY', { query: 'GameDataAll', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryGameDataAll', payload: { options: { all }, params: {...key},query }})
+				return getters['getGameDataAll']( { params: {...key}, query}) ?? {}
+			} catch (e) {
+				throw new Error('QueryClient:QueryGameDataAll API Node Unavailable. Could not perform query: ' + e.message)
 				
 			}
 		},

@@ -1,0 +1,14 @@
+syntax = "proto3";
+package avikj.toe.toe;
+
+option go_package = "github.com/avikj/toe/x/toe/types";
+
+message GameData {
+  string index = 1; 
+  string playerX = 2; 
+  string playerO = 3; 
+  string boardState = 4; 
+  uint64 gameId = 5; 
+  
+}
+
