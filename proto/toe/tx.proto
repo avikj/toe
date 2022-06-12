@@ -8,6 +8,7 @@ option go_package = "github.com/avikj/toe/x/toe/types";
 // Msg defines the Msg service.
 service Msg {
       rpc NewGame(MsgNewGame) returns (MsgNewGameResponse);
+  rpc JoinGame(MsgJoinGame) returns (MsgJoinGameResponse);
 // this line is used by starport scaffolding # proto/tx/rpc
 }
 
@@ -17,6 +18,16 @@ message MsgNewGame {
 
 message MsgNewGameResponse {
   uint64 gameId = 1;
+}
+
+message MsgJoinGame {
+  string creator = 1;
+  uint64 gameId = 2;
+}
+
+message MsgJoinGameResponse {
+  string playerX = 1;
+  string playerO = 2;
 }
 
 // this line is used by starport scaffolding # proto/tx/message

@@ -12,6 +12,16 @@ export interface MsgNewGameResponse {
   gameId: number;
 }
 
+export interface MsgJoinGame {
+  creator: string;
+  gameId: number;
+}
+
+export interface MsgJoinGameResponse {
+  playerX: string;
+  playerO: string;
+}
+
 const baseMsgNewGame: object = { creator: "" };
 
 export const MsgNewGame = {
@@ -125,10 +135,158 @@ export const MsgNewGameResponse = {
   },
 };
 
+const baseMsgJoinGame: object = { creator: "", gameId: 0 };
+
+export const MsgJoinGame = {
+  encode(message: MsgJoinGame, writer: Writer = Writer.create()): Writer {
+    if (message.creator !== "") {
+      writer.uint32(10).string(message.creator);
+    }
+    if (message.gameId !== 0) {
+      writer.uint32(16).uint64(message.gameId);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgJoinGame {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseMsgJoinGame } as MsgJoinGame;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string();
+          break;
+        case 2:
+          message.gameId = longToNumber(reader.uint64() as Long);
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgJoinGame {
+    const message = { ...baseMsgJoinGame } as MsgJoinGame;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = String(object.creator);
+    } else {
+      message.creator = "";
+    }
+    if (object.gameId !== undefined && object.gameId !== null) {
+      message.gameId = Number(object.gameId);
+    } else {
+      message.gameId = 0;
+    }
+    return message;
+  },
+
+  toJSON(message: MsgJoinGame): unknown {
+    const obj: any = {};
+    message.creator !== undefined && (obj.creator = message.creator);
+    message.gameId !== undefined && (obj.gameId = message.gameId);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<MsgJoinGame>): MsgJoinGame {
+    const message = { ...baseMsgJoinGame } as MsgJoinGame;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = object.creator;
+    } else {
+      message.creator = "";
+    }
+    if (object.gameId !== undefined && object.gameId !== null) {
+      message.gameId = object.gameId;
+    } else {
+      message.gameId = 0;
+    }
+    return message;
+  },
+};
+
+const baseMsgJoinGameResponse: object = { playerX: "", playerO: "" };
+
+export const MsgJoinGameResponse = {
+  encode(
+    message: MsgJoinGameResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.playerX !== "") {
+      writer.uint32(10).string(message.playerX);
+    }
+    if (message.playerO !== "") {
+      writer.uint32(18).string(message.playerO);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgJoinGameResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseMsgJoinGameResponse } as MsgJoinGameResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.playerX = reader.string();
+          break;
+        case 2:
+          message.playerO = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgJoinGameResponse {
+    const message = { ...baseMsgJoinGameResponse } as MsgJoinGameResponse;
+    if (object.playerX !== undefined && object.playerX !== null) {
+      message.playerX = String(object.playerX);
+    } else {
+      message.playerX = "";
+    }
+    if (object.playerO !== undefined && object.playerO !== null) {
+      message.playerO = String(object.playerO);
+    } else {
+      message.playerO = "";
+    }
+    return message;
+  },
+
+  toJSON(message: MsgJoinGameResponse): unknown {
+    const obj: any = {};
+    message.playerX !== undefined && (obj.playerX = message.playerX);
+    message.playerO !== undefined && (obj.playerO = message.playerO);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<MsgJoinGameResponse>): MsgJoinGameResponse {
+    const message = { ...baseMsgJoinGameResponse } as MsgJoinGameResponse;
+    if (object.playerX !== undefined && object.playerX !== null) {
+      message.playerX = object.playerX;
+    } else {
+      message.playerX = "";
+    }
+    if (object.playerO !== undefined && object.playerO !== null) {
+      message.playerO = object.playerO;
+    } else {
+      message.playerO = "";
+    }
+    return message;
+  },
+};
+
 /** Msg defines the Msg service. */
 export interface Msg {
-  /** this line is used by starport scaffolding # proto/tx/rpc */
   NewGame(request: MsgNewGame): Promise<MsgNewGameResponse>;
+  /** this line is used by starport scaffolding # proto/tx/rpc */
+  JoinGame(request: MsgJoinGame): Promise<MsgJoinGameResponse>;
 }
 
 export class MsgClientImpl implements Msg {
@@ -140,6 +298,12 @@ export class MsgClientImpl implements Msg {
     const data = MsgNewGame.encode(request).finish();
     const promise = this.rpc.request("avikj.toe.toe.Msg", "NewGame", data);
     return promise.then((data) => MsgNewGameResponse.decode(new Reader(data)));
+  }
+
+  JoinGame(request: MsgJoinGame): Promise<MsgJoinGameResponse> {
+    const data = MsgJoinGame.encode(request).finish();
+    const promise = this.rpc.request("avikj.toe.toe.Msg", "JoinGame", data);
+    return promise.then((data) => MsgJoinGameResponse.decode(new Reader(data)));
   }
 }
 

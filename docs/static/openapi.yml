@@ -28536,6 +28536,13 @@ definitions:
       gameId:
         type: string
         format: uint64
+  avikj.toe.toe.MsgJoinGameResponse:
+    type: object
+    properties:
+      playerX:
+        type: string
+      playerO:
+        type: string
   avikj.toe.toe.MsgNewGameResponse:
     type: object
     properties:
