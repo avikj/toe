@@ -1,6 +1,7 @@
 /* eslint-disable */
 import { Reader, Writer } from "protobufjs/minimal";
 import { Params } from "../toe/params";
+import { NextGameId } from "../toe/next_game_id";
 
 export const protobufPackage = "avikj.toe.toe";
 
@@ -11,6 +12,12 @@ export interface QueryParamsRequest {}
 export interface QueryParamsResponse {
   /** params holds all the parameters of this module. */
   params: Params | undefined;
+}
+
+export interface QueryGetNextGameIdRequest {}
+
+export interface QueryGetNextGameIdResponse {
+  NextGameId: NextGameId | undefined;
 }
 
 const baseQueryParamsRequest: object = {};
@@ -110,10 +117,138 @@ export const QueryParamsResponse = {
   },
 };
 
+const baseQueryGetNextGameIdRequest: object = {};
+
+export const QueryGetNextGameIdRequest = {
+  encode(
+    _: QueryGetNextGameIdRequest,
+    writer: Writer = Writer.create()
+  ): Writer {
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): QueryGetNextGameIdRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseQueryGetNextGameIdRequest,
+    } as QueryGetNextGameIdRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): QueryGetNextGameIdRequest {
+    const message = {
+      ...baseQueryGetNextGameIdRequest,
+    } as QueryGetNextGameIdRequest;
+    return message;
+  },
+
+  toJSON(_: QueryGetNextGameIdRequest): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial(
+    _: DeepPartial<QueryGetNextGameIdRequest>
+  ): QueryGetNextGameIdRequest {
+    const message = {
+      ...baseQueryGetNextGameIdRequest,
+    } as QueryGetNextGameIdRequest;
+    return message;
+  },
+};
+
+const baseQueryGetNextGameIdResponse: object = {};
+
+export const QueryGetNextGameIdResponse = {
+  encode(
+    message: QueryGetNextGameIdResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.NextGameId !== undefined) {
+      NextGameId.encode(message.NextGameId, writer.uint32(10).fork()).ldelim();
+    }
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): QueryGetNextGameIdResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseQueryGetNextGameIdResponse,
+    } as QueryGetNextGameIdResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.NextGameId = NextGameId.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryGetNextGameIdResponse {
+    const message = {
+      ...baseQueryGetNextGameIdResponse,
+    } as QueryGetNextGameIdResponse;
+    if (object.NextGameId !== undefined && object.NextGameId !== null) {
+      message.NextGameId = NextGameId.fromJSON(object.NextGameId);
+    } else {
+      message.NextGameId = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryGetNextGameIdResponse): unknown {
+    const obj: any = {};
+    message.NextGameId !== undefined &&
+      (obj.NextGameId = message.NextGameId
+        ? NextGameId.toJSON(message.NextGameId)
+        : undefined);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryGetNextGameIdResponse>
+  ): QueryGetNextGameIdResponse {
+    const message = {
+      ...baseQueryGetNextGameIdResponse,
+    } as QueryGetNextGameIdResponse;
+    if (object.NextGameId !== undefined && object.NextGameId !== null) {
+      message.NextGameId = NextGameId.fromPartial(object.NextGameId);
+    } else {
+      message.NextGameId = undefined;
+    }
+    return message;
+  },
+};
+
 /** Query defines the gRPC querier service. */
 export interface Query {
   /** Parameters queries the parameters of the module. */
   Params(request: QueryParamsRequest): Promise<QueryParamsResponse>;
+  /** Queries a NextGameId by index. */
+  NextGameId(
+    request: QueryGetNextGameIdRequest
+  ): Promise<QueryGetNextGameIdResponse>;
 }
 
 export class QueryClientImpl implements Query {
@@ -125,6 +260,16 @@ export class QueryClientImpl implements Query {
     const data = QueryParamsRequest.encode(request).finish();
     const promise = this.rpc.request("avikj.toe.toe.Query", "Params", data);
     return promise.then((data) => QueryParamsResponse.decode(new Reader(data)));
+  }
+
+  NextGameId(
+    request: QueryGetNextGameIdRequest
+  ): Promise<QueryGetNextGameIdResponse> {
+    const data = QueryGetNextGameIdRequest.encode(request).finish();
+    const promise = this.rpc.request("avikj.toe.toe.Query", "NextGameId", data);
+    return promise.then((data) =>
+      QueryGetNextGameIdResponse.decode(new Reader(data))
+    );
   }
 }
 

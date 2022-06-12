@@ -4,6 +4,42 @@ info:
   name: ''
   description: ''
 paths:
+  /avikj/toe/toe/next_game_id:
+    get:
+      summary: Queries a NextGameId by index.
+      operationId: AvikjToeToeNextGameId
+      responses:
+        '200':
+          description: A successful response.
+          schema:
+            type: object
+            properties:
+              NextGameId:
+                type: object
+                properties:
+                  value:
+                    type: string
+                    format: uint64
+        default:
+          description: An unexpected error response.
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    '@type':
+                      type: string
+                  additionalProperties: {}
+      tags:
+        - Query
   /avikj/toe/toe/params:
     get:
       summary: Parameters queries the parameters of the module.
@@ -28307,9 +28343,24 @@ paths:
       tags:
         - Query
 definitions:
+  avikj.toe.toe.NextGameId:
+    type: object
+    properties:
+      value:
+        type: string
+        format: uint64
   avikj.toe.toe.Params:
     type: object
     description: Params defines the parameters for the module.
+  avikj.toe.toe.QueryGetNextGameIdResponse:
+    type: object
+    properties:
+      NextGameId:
+        type: object
+        properties:
+          value:
+            type: string
+            format: uint64
   avikj.toe.toe.QueryParamsResponse:
     type: object
     properties:

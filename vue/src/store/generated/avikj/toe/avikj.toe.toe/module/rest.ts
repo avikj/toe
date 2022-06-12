@@ -20,10 +20,19 @@ export interface RpcStatus {
   details?: ProtobufAny[];
 }
 
+export interface ToeNextGameId {
+  /** @format uint64 */
+  value?: string;
+}
+
 /**
  * Params defines the parameters for the module.
  */
 export type ToeParams = object;
+
+export interface ToeQueryGetNextGameIdResponse {
+  NextGameId?: ToeNextGameId;
+}
 
 /**
  * QueryParamsResponse is response type for the Query/Params RPC method.
@@ -229,6 +238,22 @@ export class HttpClient<SecurityDataType = unknown> {
  * @version version not set
  */
 export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryNextGameId
+   * @summary Queries a NextGameId by index.
+   * @request GET:/avikj/toe/toe/next_game_id
+   */
+  queryNextGameId = (params: RequestParams = {}) =>
+    this.request<ToeQueryGetNextGameIdResponse, RpcStatus>({
+      path: `/avikj/toe/toe/next_game_id`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+
   /**
    * No description
    *
