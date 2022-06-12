@@ -30,6 +30,11 @@ export interface ToeGameData {
   gameId?: string;
 }
 
+export interface ToeMsgNewGameResponse {
+  /** @format uint64 */
+  gameId?: string;
+}
+
 export interface ToeNextGameId {
   /** @format uint64 */
   value?: string;

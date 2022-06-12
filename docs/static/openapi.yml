@@ -28536,6 +28536,12 @@ definitions:
       gameId:
         type: string
         format: uint64
+  avikj.toe.toe.MsgNewGameResponse:
+    type: object
+    properties:
+      gameId:
+        type: string
+        format: uint64
   avikj.toe.toe.NextGameId:
     type: object
     properties:
