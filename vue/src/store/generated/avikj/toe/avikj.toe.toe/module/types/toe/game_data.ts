@@ -10,6 +10,7 @@ export interface GameData {
   playerO: string;
   boardState: string;
   gameId: number;
+  creator: string;
 }
 
 const baseGameData: object = {
@@ -18,6 +19,7 @@ const baseGameData: object = {
   playerO: "",
   boardState: "",
   gameId: 0,
+  creator: "",
 };
 
 export const GameData = {
@@ -36,6 +38,9 @@ export const GameData = {
     }
     if (message.gameId !== 0) {
       writer.uint32(40).uint64(message.gameId);
+    }
+    if (message.creator !== "") {
+      writer.uint32(50).string(message.creator);
     }
     return writer;
   },
@@ -61,6 +66,9 @@ export const GameData = {
           break;
         case 5:
           message.gameId = longToNumber(reader.uint64() as Long);
+          break;
+        case 6:
+          message.creator = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -97,6 +105,11 @@ export const GameData = {
     } else {
       message.gameId = 0;
     }
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = String(object.creator);
+    } else {
+      message.creator = "";
+    }
     return message;
   },
 
@@ -107,6 +120,7 @@ export const GameData = {
     message.playerO !== undefined && (obj.playerO = message.playerO);
     message.boardState !== undefined && (obj.boardState = message.boardState);
     message.gameId !== undefined && (obj.gameId = message.gameId);
+    message.creator !== undefined && (obj.creator = message.creator);
     return obj;
   },
 
@@ -136,6 +150,11 @@ export const GameData = {
       message.gameId = object.gameId;
     } else {
       message.gameId = 0;
+    }
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = object.creator;
+    } else {
+      message.creator = "";
     }
     return message;
   },

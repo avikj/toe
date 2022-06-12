@@ -30,6 +30,8 @@ paths:
                     gameId:
                       type: string
                       format: uint64
+                    creator:
+                      type: string
               pagination:
                 type: object
                 properties:
@@ -158,6 +160,8 @@ paths:
                   gameId:
                     type: string
                     format: uint64
+                  creator:
+                    type: string
         default:
           description: An unexpected error response.
           schema:
@@ -28536,6 +28540,8 @@ definitions:
       gameId:
         type: string
         format: uint64
+      creator:
+        type: string
   avikj.toe.toe.MsgJoinGameResponse:
     type: object
     properties:
@@ -28582,6 +28588,8 @@ definitions:
             gameId:
               type: string
               format: uint64
+            creator:
+              type: string
       pagination:
         type: object
         properties:
@@ -28624,6 +28632,8 @@ definitions:
           gameId:
             type: string
             format: uint64
+          creator:
+            type: string
   avikj.toe.toe.QueryGetNextGameIdResponse:
     type: object
     properties:

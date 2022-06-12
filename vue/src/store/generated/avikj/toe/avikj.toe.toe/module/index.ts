@@ -5,14 +5,14 @@ import { SigningStargateClient } from "@cosmjs/stargate";
 import { Registry, OfflineSigner, EncodeObject, DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
 import { Api } from "./rest";
 import { MsgPlaceMarker } from "./types/toe/tx";
-import { MsgNewGame } from "./types/toe/tx";
 import { MsgJoinGame } from "./types/toe/tx";
+import { MsgNewGame } from "./types/toe/tx";
 
 
 const types = [
   ["/avikj.toe.toe.MsgPlaceMarker", MsgPlaceMarker],
-  ["/avikj.toe.toe.MsgNewGame", MsgNewGame],
   ["/avikj.toe.toe.MsgJoinGame", MsgJoinGame],
+  ["/avikj.toe.toe.MsgNewGame", MsgNewGame],
   
 ];
 export const MissingWalletError = new Error("wallet is required");
@@ -46,8 +46,8 @@ const txClient = async (wallet: OfflineSigner, { addr: addr }: TxClientOptions =
   return {
     signAndBroadcast: (msgs: EncodeObject[], { fee, memo }: SignAndBroadcastOptions = {fee: defaultFee, memo: ""}) => client.signAndBroadcast(address, msgs, fee,memo),
     msgPlaceMarker: (data: MsgPlaceMarker): EncodeObject => ({ typeUrl: "/avikj.toe.toe.MsgPlaceMarker", value: MsgPlaceMarker.fromPartial( data ) }),
-    msgNewGame: (data: MsgNewGame): EncodeObject => ({ typeUrl: "/avikj.toe.toe.MsgNewGame", value: MsgNewGame.fromPartial( data ) }),
     msgJoinGame: (data: MsgJoinGame): EncodeObject => ({ typeUrl: "/avikj.toe.toe.MsgJoinGame", value: MsgJoinGame.fromPartial( data ) }),
+    msgNewGame: (data: MsgNewGame): EncodeObject => ({ typeUrl: "/avikj.toe.toe.MsgNewGame", value: MsgNewGame.fromPartial( data ) }),
     
   };
 };

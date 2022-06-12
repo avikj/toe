@@ -28,6 +28,7 @@ export interface ToeGameData {
 
   /** @format uint64 */
   gameId?: string;
+  creator?: string;
 }
 
 export interface ToeMsgJoinGameResponse {

@@ -9,6 +9,6 @@ message GameData {
   string playerO = 3; 
   string boardState = 4; 
   uint64 gameId = 5; 
-  
+  string creator = 6;
 }
 
