@@ -40,6 +40,10 @@ export interface ToeMsgNewGameResponse {
   gameId?: string;
 }
 
+export interface ToeMsgPlaceMarkerResponse {
+  gameStatus?: string;
+}
+
 export interface ToeNextGameId {
   /** @format uint64 */
   value?: string;

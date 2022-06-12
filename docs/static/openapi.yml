@@ -28549,6 +28549,11 @@ definitions:
       gameId:
         type: string
         format: uint64
+  avikj.toe.toe.MsgPlaceMarkerResponse:
+    type: object
+    properties:
+      gameStatus:
+        type: string
   avikj.toe.toe.NextGameId:
     type: object
     properties:

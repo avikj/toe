@@ -9,6 +9,7 @@ option go_package = "github.com/avikj/toe/x/toe/types";
 service Msg {
       rpc NewGame(MsgNewGame) returns (MsgNewGameResponse);
   rpc JoinGame(MsgJoinGame) returns (MsgJoinGameResponse);
+  rpc PlaceMarker(MsgPlaceMarker) returns (MsgPlaceMarkerResponse);
 // this line is used by starport scaffolding # proto/tx/rpc
 }
 
@@ -28,6 +29,16 @@ message MsgJoinGame {
 message MsgJoinGameResponse {
   string playerX = 1;
   string playerO = 2;
+}
+
+message MsgPlaceMarker {
+  string creator = 1;
+  uint64 gameId = 2;
+  uint64 pos = 3;
+}
+
+message MsgPlaceMarkerResponse {
+  string gameStatus = 1;
 }
 
 // this line is used by starport scaffolding # proto/tx/message

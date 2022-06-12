@@ -230,6 +230,21 @@ export default {
 		},
 		
 		
+		async sendMsgPlaceMarker({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const txClient=await initTxClient(rootGetters)
+				const msg = await txClient.msgPlaceMarker(value)
+				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
+	gas: "200000" }, memo})
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgPlaceMarker:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgPlaceMarker:Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
 		async sendMsgNewGame({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
@@ -261,6 +276,19 @@ export default {
 			}
 		},
 		
+		async MsgPlaceMarker({ rootGetters }, { value }) {
+			try {
+				const txClient=await initTxClient(rootGetters)
+				const msg = await txClient.msgPlaceMarker(value)
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgPlaceMarker:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgPlaceMarker:Create Could not create message: ' + e.message)
+				}
+			}
+		},
 		async MsgNewGame({ rootGetters }, { value }) {
 			try {
 				const txClient=await initTxClient(rootGetters)

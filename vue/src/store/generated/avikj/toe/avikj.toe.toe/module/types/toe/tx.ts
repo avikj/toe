@@ -22,6 +22,16 @@ export interface MsgJoinGameResponse {
   playerO: string;
 }
 
+export interface MsgPlaceMarker {
+  creator: string;
+  gameId: number;
+  pos: number;
+}
+
+export interface MsgPlaceMarkerResponse {
+  gameStatus: string;
+}
+
 const baseMsgNewGame: object = { creator: "" };
 
 export const MsgNewGame = {
@@ -282,11 +292,161 @@ export const MsgJoinGameResponse = {
   },
 };
 
+const baseMsgPlaceMarker: object = { creator: "", gameId: 0, pos: 0 };
+
+export const MsgPlaceMarker = {
+  encode(message: MsgPlaceMarker, writer: Writer = Writer.create()): Writer {
+    if (message.creator !== "") {
+      writer.uint32(10).string(message.creator);
+    }
+    if (message.gameId !== 0) {
+      writer.uint32(16).uint64(message.gameId);
+    }
+    if (message.pos !== 0) {
+      writer.uint32(24).uint64(message.pos);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgPlaceMarker {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseMsgPlaceMarker } as MsgPlaceMarker;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string();
+          break;
+        case 2:
+          message.gameId = longToNumber(reader.uint64() as Long);
+          break;
+        case 3:
+          message.pos = longToNumber(reader.uint64() as Long);
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgPlaceMarker {
+    const message = { ...baseMsgPlaceMarker } as MsgPlaceMarker;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = String(object.creator);
+    } else {
+      message.creator = "";
+    }
+    if (object.gameId !== undefined && object.gameId !== null) {
+      message.gameId = Number(object.gameId);
+    } else {
+      message.gameId = 0;
+    }
+    if (object.pos !== undefined && object.pos !== null) {
+      message.pos = Number(object.pos);
+    } else {
+      message.pos = 0;
+    }
+    return message;
+  },
+
+  toJSON(message: MsgPlaceMarker): unknown {
+    const obj: any = {};
+    message.creator !== undefined && (obj.creator = message.creator);
+    message.gameId !== undefined && (obj.gameId = message.gameId);
+    message.pos !== undefined && (obj.pos = message.pos);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<MsgPlaceMarker>): MsgPlaceMarker {
+    const message = { ...baseMsgPlaceMarker } as MsgPlaceMarker;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = object.creator;
+    } else {
+      message.creator = "";
+    }
+    if (object.gameId !== undefined && object.gameId !== null) {
+      message.gameId = object.gameId;
+    } else {
+      message.gameId = 0;
+    }
+    if (object.pos !== undefined && object.pos !== null) {
+      message.pos = object.pos;
+    } else {
+      message.pos = 0;
+    }
+    return message;
+  },
+};
+
+const baseMsgPlaceMarkerResponse: object = { gameStatus: "" };
+
+export const MsgPlaceMarkerResponse = {
+  encode(
+    message: MsgPlaceMarkerResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.gameStatus !== "") {
+      writer.uint32(10).string(message.gameStatus);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgPlaceMarkerResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseMsgPlaceMarkerResponse } as MsgPlaceMarkerResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.gameStatus = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgPlaceMarkerResponse {
+    const message = { ...baseMsgPlaceMarkerResponse } as MsgPlaceMarkerResponse;
+    if (object.gameStatus !== undefined && object.gameStatus !== null) {
+      message.gameStatus = String(object.gameStatus);
+    } else {
+      message.gameStatus = "";
+    }
+    return message;
+  },
+
+  toJSON(message: MsgPlaceMarkerResponse): unknown {
+    const obj: any = {};
+    message.gameStatus !== undefined && (obj.gameStatus = message.gameStatus);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<MsgPlaceMarkerResponse>
+  ): MsgPlaceMarkerResponse {
+    const message = { ...baseMsgPlaceMarkerResponse } as MsgPlaceMarkerResponse;
+    if (object.gameStatus !== undefined && object.gameStatus !== null) {
+      message.gameStatus = object.gameStatus;
+    } else {
+      message.gameStatus = "";
+    }
+    return message;
+  },
+};
+
 /** Msg defines the Msg service. */
 export interface Msg {
   NewGame(request: MsgNewGame): Promise<MsgNewGameResponse>;
-  /** this line is used by starport scaffolding # proto/tx/rpc */
   JoinGame(request: MsgJoinGame): Promise<MsgJoinGameResponse>;
+  /** this line is used by starport scaffolding # proto/tx/rpc */
+  PlaceMarker(request: MsgPlaceMarker): Promise<MsgPlaceMarkerResponse>;
 }
 
 export class MsgClientImpl implements Msg {
@@ -304,6 +464,14 @@ export class MsgClientImpl implements Msg {
     const data = MsgJoinGame.encode(request).finish();
     const promise = this.rpc.request("avikj.toe.toe.Msg", "JoinGame", data);
     return promise.then((data) => MsgJoinGameResponse.decode(new Reader(data)));
+  }
+
+  PlaceMarker(request: MsgPlaceMarker): Promise<MsgPlaceMarkerResponse> {
+    const data = MsgPlaceMarker.encode(request).finish();
+    const promise = this.rpc.request("avikj.toe.toe.Msg", "PlaceMarker", data);
+    return promise.then((data) =>
+      MsgPlaceMarkerResponse.decode(new Reader(data))
+    );
   }
 }
 
