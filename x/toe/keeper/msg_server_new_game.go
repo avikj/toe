@@ -15,6 +15,7 @@ func (k msgServer) NewGame(goCtx context.Context, msg *types.MsgNewGame) (*types
 	// create new gameData entry {creator: message.Creator, playerX: “”, playerO: “”, boardState: “_________”, id: nextGameIdValue}
 	newGameData := types.GameData{
 		Index: strconv.FormatUint(nextGameIdStruct.Value, 10),
+		GameId: nextGameIdStruct.Value,
 		Creator: msg.Creator,
 		PlayerX: "",
 		PlayerO: "",

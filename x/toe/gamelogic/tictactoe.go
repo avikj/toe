@@ -3,12 +3,14 @@ package gamelogic
 import (
 	"errors"
 	"fmt"
+	"github.com/avikj/toe/x/toe/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
 // The entire game state can be represented by a 9-character string;
 //		The active turn and game completion can be inferred from this string.
 
-type GameStatus int
+type GameStatus uint
 
 const (
 	NoStatus GameStatus = iota
@@ -51,21 +53,21 @@ const EmptyMarker = byte('_')
 
 var Turn = map[byte]GameStatus{XMarker: XTurn, OMarker: OTurn}
 
-func PlaceMarker(boardState string, marker byte, pos int) (string, error) {
+func PlaceMarker(boardState string, marker byte, pos uint) (string, error) {
 	if pos < 0 || pos >= 9 {
-		return boardState, errors.New(fmt.Sprintf("Position out of bounds: %v", pos))
+		return boardState, sdkerrors.Wrapf(types.ErrPosOutOfBounds, "marker must be placed in position [0,9), %d invalid", pos)
 	}
 
-	var status, err = getStatus(boardState)
+	var status, err = GetStatus(boardState)
 
 	if err != nil {
 		return boardState, err
 	}
 	if status != Turn[marker] {
-		return boardState, errors.New(fmt.Sprintf("Not %v's turn. Game status: %v", marker, status))
+		return boardState, sdkerrors.Wrapf(types.ErrTurn, "not your turn, gamestatus=%s", status.String())
 	}
 	if boardState[pos] != EmptyMarker {
-		return boardState, errors.New(fmt.Sprintf("Position %v already occupied by %v", pos, boardState[pos]))
+		return boardState, sdkerrors.Wrapf(types.ErrPosOccupied, "position %d already occupied", pos)
 	}
 
 	var newState = boardState[:pos] + string(marker) + boardState[pos+1:]
@@ -73,16 +75,16 @@ func PlaceMarker(boardState string, marker byte, pos int) (string, error) {
 	return newState, nil
 }
 
-func PlaceO(boardState string, pos int) (string, error) {
+func PlaceO(boardState string, pos uint) (string, error) {
 	return PlaceMarker(boardState, OMarker, pos)
 }
 
-func PlaceX(boardState string, pos int) (newState string, err error) {
+func PlaceX(boardState string, pos uint) (newState string, err error) {
 	return PlaceMarker(boardState, XMarker, pos)
 }
 
 // TODO throw error if string contains unicode characters (generally deal with string/rune/bytes abstraction)
-func getStatus(boardState string) (status GameStatus, err error) {
+func GetStatus(boardState string) (status GameStatus, err error) {
 	// returned error is either nil or InvalidBoardState
 	if len(boardState) != 9 {
 		return NoStatus, errors.New(fmt.Sprintf("Board state must have 9 characters. Invalid board state: %v", boardState))
